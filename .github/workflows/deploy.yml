@@ -3,29 +3,31 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 触发部署的分支
+      - gh-pages   # 监听 gh-pages 分支（或 main，看你实际触发）
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
         with:
-          node-version: '20'  # 使用的 Node.js 版本
+          ref: gh-pages   # <── 关键：检出 gh-pages 分支
 
-      - name: Install dependencies
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
         run: npm install
 
       - name: Build
         run: npm run docs:build
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.1
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # 目标分支
-          folder: docs/.vitepress/dist  # 构建后的文件夹路径
-          clean: true  # 清除目标分支中的旧文件
+          branch: gh-pages
+          folder: docs/.vitepress/dist
+          clean: true
